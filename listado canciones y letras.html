@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de canciones</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { color: #333; }
+    ul { list-style: none; padding-left: 0; }
+    li { margin: 10px 0; }
+    a { text-decoration: none; color: #0077cc; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>Lista de canciones</h1>
+  <ul id="lista-canciones">Cargando canciones...</ul>
+
+  <script>
+    // 🔗 Sustituye esta URL por el enlace CSV publicado de tu hoja de cálculo
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSg5XZBzFPFIuAtZl4jsBAqkiby8la0HVWVe0QCMaMvO_-aTImm4cVK4TzcnkDk5oj-eKP7ZA76dSmw/pub?gid=0&single=true&output=csv';
+
+    async function cargarCanciones() {
+      const lista = document.getElementById("lista-canciones");
+      lista.innerHTML = ""; // Limpia el mensaje inicial
+
+      try {
+        const response = await fetch(csvUrl);
+        const data = await response.text();
+
+        const filas = data.trim().split("\n").slice(1); // omitir encabezado
+
+        filas.forEach(fila => {
+          const [titulo, id] = fila.split(",");
+
+          const li = document.createElement("li");
+          const link = document.createElement("a");
+
+          link.href = `https://docs.google.com/document/d/${id}/preview`;
+          link.target = "_blank";
+          link.textContent = titulo;
+
+          li.appendChild(link);
+          lista.appendChild(li);
+        });
+      } catch (error) {
+        lista.innerHTML = "Error al cargar las canciones.";
+        console.error("Error cargando CSV:", error);
+      }
+    }
+
+    cargarCanciones();
+  </script>
+</body>
+</html>
